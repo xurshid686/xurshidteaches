@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - IELTS Progress Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">📚 IELTS Student Portal</h1>
+                <p id="welcomeMessage" class="text-gray-600">Welcome back!</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="studentName" class="text-gray-700 font-semibold"></span>
+                <a href="login.html" class="bg-red-600 text-white px-4 py-2 rounded-lg">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm mb-8">
+        <div class="container mx-auto px-4">
+            <div class="flex space-x-8">
+                <a href="dashboard.html" class="py-4 text-blue-600 border-b-2 border-blue-600 font-semibold">
+                    <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
+                </a>
+                <a href="homework.html" class="py-4 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-tasks mr-2"></i>Homework
+                </a>
+                <a href="progress.html" class="py-4 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-chart-line mr-2"></i>Progress
+                </a>
+                <a href="library.html" class="py-4 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-book mr-2"></i>Library
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4">
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-600">Overall Progress</p>
+                        <h3 id="overallProgress" class="text-3xl font-bold text-gray-800">0%</h3>
+                    </div>
+                    <div class="text-3xl text-blue-500">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-green-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-600">Pending Homework</p>
+                        <h3 id="pendingCount" class="text-3xl font-bold text-gray-800">0</h3>
+                    </div>
+                    <div class="text-3xl text-green-500">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-purple-500">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-600">Completed Lessons</p>
+                        <h3 id="completedLessons" class="text-3xl font-bold text-gray-800">0</h3>
+                    </div>
+                    <div class="text-3xl text-purple-500">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Progress Chart -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold mb-4">My Progress Overview</h3>
+                <canvas id="myProgressChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Recent Homework -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold mb-4">Recent Homework</h3>
+                <div id="recentHomework" class="space-y-3">
+                    <!-- Homework items will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+            <h3 class="text-xl font-bold mb-4">Upcoming Deadlines</h3>
+            <div id="upcomingDeadlines" class="space-y-3">
+                <!-- Deadlines will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStudent = null;
+
+        function loadStudentData() {
+            const studentData = localStorage.getItem('currentStudent');
+            if (!studentData) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentStudent = JSON.parse(studentData);
+            document.getElementById('studentName').textContent = currentStudent.name;
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${currentStudent.name}!`;
+
+            updateDashboardStats();
+            loadRecentHomework();
+            loadUpcomingDeadlines();
+        }
+
+        function updateDashboardStats() {
+            const homeworks = JSON.parse(localStorage.getItem('homeworks') || '[]');
+            const studentHomeworks = homeworks.filter(h => h.studentId === currentStudent.id);
+            
+            const pendingCount = studentHomeworks.filter(h => !h.completed).length;
+            const completedCount = studentHomeworks.filter(h => h.completed).length;
+            const totalLessons = studentHomeworks.length;
+            const progress = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+
+            document.getElementById('overallProgress').textContent = progress + '%';
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('completedLessons').textContent = completedCount;
+
+            // Update progress chart
+            updateProgressChart(completedCount, pendingCount);
+        }
+
+        function updateProgressChart(completed, pending) {
+            const ctx = document.getElementById('myProgressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Pending'],
+                    datasets: [{
+                        data: [completed, pending],
+                        backgroundColor: ['#22c55e', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadRecentHomework() {
+            const homeworks = JSON.parse(localStorage.getItem('homeworks') || '[]');
+            const studentHomeworks = homeworks.filter(h => h.studentId === currentStudent.id)
+                                             .slice(-3)
+                                             .reverse();
+            
+            const container = document.getElementById('recentHomework');
+            container.innerHTML = studentHomeworks.map(hw => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <h4 class="font-semibold text-gray-800">${hw.title}</h4>
+                        <p class="text-sm text-gray-600">Due: ${hw.dueDate}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm ${
+                        hw.completed ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }">
+                        ${hw.completed ? 'Completed' : 'Pending'}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function loadUpcomingDeadlines() {
+            const homeworks = JSON.parse(localStorage.getItem('homeworks') || '[]');
+            const upcoming = homeworks.filter(h => 
+                h.studentId === currentStudent.id && 
+                !h.completed && 
+                new Date(h.dueDate) > new Date()
+            ).slice(0, 3);
+            
+            const container = document.getElementById('upcomingDeadlines');
+            container.innerHTML = upcoming.map(hw => `
+                <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <div>
+                        <h4 class="font-semibold text-gray-800">${hw.title}</h4>
+                        <p class="text-sm text-orange-600">
+                            <i class="fas fa-clock mr-1"></i>Due: ${hw.dueDate}
+                        </p>
+                    </div>
+                    <a href="homework.html" class="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-orange-600">
+                        View
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadStudentData);
+    </script>
+</body>
+</html>
