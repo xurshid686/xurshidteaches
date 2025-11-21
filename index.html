@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Progress Tracker - Complete Teaching Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="relative z-10 container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-bold text-white mb-4">
+                📊 IELTS Progress Tracker
+            </h1>
+            <p class="text-xl text-white/80 mb-8">
+                Complete Platform for Student Management & Progress Tracking
+            </p>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <a href="/admin/dashboard.html" 
+                   class="bg-white text-purple-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-purple-50 transition-all duration-300 shadow-lg">
+                   👨‍🏫 Teacher Login
+                </a>
+                <a href="/student/login.html" 
+                   class="bg-purple-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-purple-600 transition-all duration-300 shadow-lg">
+                   👨‍🎓 Student Login
+                </a>
+            </div>
+        </header>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Feature 1 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">👥</div>
+                <h3 class="text-xl font-bold mb-2">Student Management</h3>
+                <p class="text-white/70">Register students, create groups, assign login credentials</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">📚</div>
+                <h3 class="text-xl font-bold mb-2">Homework System</h3>
+                <p class="text-white/70">Upload assignments, track submissions, provide feedback</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">📊</div>
+                <h3 class="text-xl font-bold mb-2">Progress Analytics</h3>
+                <p class="text-white/70">Real-time progress tracking with percentage scores</p>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">🏫</div>
+                <h3 class="text-xl font-bold mb-2">Lesson Library</h3>
+                <p class="text-white/70">Organize lessons, materials, and resources</p>
+            </div>
+
+            <!-- Feature 5 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">🎯</div>
+                <h3 class="text-xl font-bold mb-2">Test Management</h3>
+                <p class="text-white/70">Create and manage unlimited tests and assessments</p>
+            </div>
+
+            <!-- Feature 6 -->
+            <div class="glass-card rounded-2xl p-6 text-white feature-card">
+                <div class="text-3xl mb-4">🚀</div>
+                <h3 class="text-xl font-bold mb-2">Vercel Deployed</h3>
+                <p class="text-white/70">Fast, reliable hosting with automatic deployments</p>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="glass-card rounded-2xl p-8 text-center">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                    <div class="text-3xl font-bold text-white">∞</div>
+                    <div class="text-white/70">Students</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white">100%</div>
+                    <div class="text-white/70">Progress Tracking</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white">24/7</div>
+                    <div class="text-white/70">Access</div>
+                </div>
+                <div>
+                    <div class="text-3xl font-bold text-white">🚀</div>
+                    <div class="text-white/70">Fast</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple storage setup
+        if (!localStorage.getItem('students')) {
+            localStorage.setItem('students', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('homeworks')) {
+            localStorage.setItem('homeworks', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('lessons')) {
+            localStorage.setItem('lessons', JSON.stringify([]));
+        }
+    </script>
+</body>
+</html>
